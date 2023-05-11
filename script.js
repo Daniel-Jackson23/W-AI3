@@ -9,11 +9,13 @@ Promise.all([
 let image;
 let canvas;
 
+//function for adding names to faces
 async function start() {
   const container = document.createElement("div");
   container.style.position = "relative";
   document.body.append(container);
   const labeledFaceDescriptors = await loadLabeledImages();
+  //faceMatcher is used to match the face with the labeled face
   const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6);
   document.body.append("Loaded");
   imageUpload.addEventListener("change", async () => {
@@ -23,6 +25,7 @@ async function start() {
     container.append(image);
     canvas = faceapi.createCanvasFromMedia(image);
     container.append(canvas);
+//displaySize is used to display the image in the canvas
     const displaySize = { width: image.width, height: image.height };
     faceapi.matchDimensions(canvas, displaySize);
     const detections = await faceapi
@@ -33,6 +36,7 @@ async function start() {
     const results = resizedDetections.map((d) =>
       faceMatcher.findBestMatch(d.descriptor)
     );
+    //drawBox is used to draw the box around the face
     results.forEach((result, i) => {
       const box = resizedDetections[i].detection.box;
       const drawBox = new faceapi.draw.DrawBox(box, {
@@ -43,6 +47,7 @@ async function start() {
   });
 }
 
+//function for loading the labeled images with the names
 function loadLabeledImages() {
   const labels = [
     "Black Widow",
@@ -53,6 +58,7 @@ function loadLabeledImages() {
     "Thor",
     "Tony Stark",
   ];
+  //getting images from external source
   return Promise.all(
     labels.map(async (label) => {
       const descriptions = [];
@@ -60,6 +66,7 @@ function loadLabeledImages() {
         const img = await faceapi.fetchImage(
           `https://raw.githubusercontent.com/WebDevSimplified/Face-Recognition-JavaScript/master/labeled_images/${label}/${i}.jpg`
         );
+        //declaring the face landmarks and face descriptor
         const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
@@ -71,3 +78,5 @@ function loadLabeledImages() {
     })
   );
 }
+
+//inspired by https://www.youtube.com/watch?v=AZ4PdALMqx0&t=339s 
