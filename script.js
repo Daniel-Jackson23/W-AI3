@@ -42,6 +42,7 @@ async function start() {
       const drawBox = new faceapi.draw.DrawBox(box, {
         label: result.toString(),
       });
+      //drawing face on the canvas
       drawBox.draw(canvas);
     });
   });
@@ -73,7 +74,7 @@ function loadLabeledImages() {
           .withFaceDescriptor();
         descriptions.push(detections.descriptor);
       }
-
+      //retreiving the labeled face descriptors on each character
       return new faceapi.LabeledFaceDescriptors(label, descriptions);
     })
   );
